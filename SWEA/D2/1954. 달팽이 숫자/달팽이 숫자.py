@@ -1,40 +1,46 @@
+# 입력
+# 테스트 케이스 T
 T = int(input())
-for test_case in range(1, T + 1):
-    '''
-    반복문 종료 조건 : N*N 수치 할당 혹은 달팽이가 정중앙
-    회전 순서 : 우측, 하강, 좌측, 상승 loop
-    회전 조건 : 배열 바깥으로 탈출
-                할당된 값이 존재할 경우 if !=0 이런거
-    '''
-    # 델타 탐색 만들기, 체스말 문제, 그림으로 그리는 거 추천
-    # 팔방 탐색 문제 많이 나옴
-    di = [0, 1, 0, -1]
-    dj = [1, 0, -1, 0]
-    # 시계 방향 순회
+
+for tc in range(1, T + 1):
+    # N 크기의 달팽이
     N = int(input())
 
+    # 로직
+    # 델타 값
+    di = [0, 1, 0, -1]
+    dj = [1, 0, -1, 0]
+
+    # 칸에 채워넣을 숫자 cnt
+    cnt = 1
+
+    # 현재 나의 방향값은?
+    vec = 0
+
+    # 나는 지금 어디인가?
+    i, j = 0, 0
+
+    # 어디에 값을 채울것인가?
     arr = [[0] * N for _ in range(N)]
 
-    # logic for/while 작성
-    cnt = 1
-    dr = 0
-    # 달팽이 좌표 설정, 좌에서 우로 읽는 구조라 턱이 걸리는거 없도록
-    i, j = 0, 0
-    while True:
-        # 달팽이가 보는 방향
+    # 언제까지 진행해야 하는가?
+    while cnt != N * N + 1:
+
+        # 다음에 오는값의 유효성 검사
+        ni, nj = i + di[vec], j + dj[vec]
+
+        # 다음에 올 값이 인덱스 범위 내에 있지 않다면?, 다음에 올 칸이 이미 차있으면?
+        # 방향을 돌린다. 어디로? 오 아래 왼 위
+        if ni < 0 or ni >= N or nj < 0 or nj >= N or arr[ni][nj] != 0:
+            vec = (vec + 1) % 4
+
+        # 그렇지 않다면?
         arr[i][j] = cnt
-        if cnt == N * N:
-            break
-        # 달팽이 시프트
-        ni = i + di[dr]
-        nj = j + dj[dr]
-        # 단축 평가 유도
-        if 0 > ni or N <= ni or 0 > nj or N <= nj or arr[ni][nj] != 0:
-            dr = (dr + 1) % 4
-            continue
-        i, j = ni, nj
         cnt += 1
-    print(f'#{test_case}')
-    # 왜 빼는지 알아야함
+        i += di[vec]
+        j += dj[vec]
+
+    # 출력
+    print(f'#{tc}')
     for i in range(N):
         print(*arr[i])

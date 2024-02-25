@@ -1,49 +1,46 @@
-move_plus = [(1, 0), (0, 1), (0, -1), (-1, 0)]
-def plus_sum(arr, i, j, n, m):
-    sum_plus = 0
-    for _i, _j in move_plus:
+dt_plus = ((1, 0), (-1, 0), (0, 1), (0, -1))        # +모양 스프레이
+def kill_plus(x, y, m):
+    sum_fly = 0
+
+    sum_fly += flies[x][y]
+    for _x, _y in dt_plus:
         for k in range(1, m):
-            ni = i + _i * k
-            nj = j + _j * k
+            nx, ny = x + _x * k, y + _y * k
 
-            if 0 <= ni < n and 0 <= nj < n:
-                sum_plus += arr[ni][nj]
-    sum_plus += arr[i][j]
-    return sum_plus
+            if 0 <= nx < N and 0 <= ny < N:
+               sum_fly += flies[nx][ny]
 
+    return sum_fly
 
-move_cross = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
-def cross_sum(arr, i, j, n, m):
-    sum_cross = 0
-    for _i, _j in move_cross:
+dt_cross = ((1, 1), (1, -1), (-1, 1), (-1, -1))     # x모양 스프레이
+def kill_cross(x, y, m):
+    sum_fly = 0
+
+    sum_fly += flies[x][y]
+    for _x, _y in dt_cross:
         for k in range(1, m):
-            ni = i + _i * k
-            nj = j + _j * k
+            nx, ny = x + _x * k, y + _y * k
 
-            if 0 <= ni < n and 0 <= nj < n:
-                sum_cross += arr[ni][nj]
-    sum_cross += arr[i][j]
-    return sum_cross
+            if 0 <= nx < N and 0 <= ny < N:
+                sum_fly += flies[nx][ny]
+
+    return sum_fly
 
 
 T = int(input())
 
-for tc in range(1, T + 1):
-    # N x N 크기의 공간
-    # M x M 크기의 파리채
+for tc in range(1, T+1):
     N, M = map(int, input().split())
 
-    # 최대 파리수
-    max_sum = 0
+    flies = [list(map(int, input().split())) for _ in range(N)]
 
-    # 공간에 존재하는 파리 마리 수
-    area = [list(map(int, input().split())) for _ in range(N)]
-
+    max_fin = 0
     for i in range(N):
         for j in range(N):
-            sum_pl = plus_sum(area, i, j, N, M)
-            sum_cr = cross_sum(area, i, j, N, M)
-            bigger = max(sum_pl, sum_cr)
-            max_sum = max(bigger, max_sum)
+            plus = kill_plus(i, j, M)
+            cross = kill_cross(i, j, M)
 
-    print(f'#{tc} {max_sum}')
+            max_both = max(plus, cross)
+            max_fin = max(max_fin, max_both)
+
+    print(f'#{tc} {max_fin}')

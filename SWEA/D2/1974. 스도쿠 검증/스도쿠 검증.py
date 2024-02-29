@@ -1,68 +1,47 @@
+'''
+SWEA 스도쿠 검증
+
+문제 요약:
+가로 9칸, 세로 9칸의 표가 주어진다.
+가로, 세로, 내부의 3x3 배열에는 1~9까지의 숫자가 중복없이 있어야 한다.
+중복되거나, 없는 수가 있다면 스도쿠를 만족하지 못하는 것
+만족하면 1, 못하면 0 출력
+'''
+
 T = int(input())
 
-for tc in range(1, T + 1):
-    # 입력
-    # 9 x 9 크기의 퍼즐 데이터 puzzle
+for tc in range(1, T+1):
     puzzle = [list(map(int, input().split())) for _ in range(9)]
 
-    # 로직
-    # 확인해야 하는 것은 총 3가지
-    # 1. 가로줄 내에서 겹치지 않는가
-    # 2. 세로줄 내에서 겹치지 않는가
-    # 3. 3 x 3 행렬 내에서 겹치지 않는가
-    # 가로줄에서 1 ~ 9 숫자의 중복성을 평가할 변수 is_dup
-    is_dup = 0
-
-    # 1 ~ 9를 세어줄 리스트 cnt_lst
-    cnt_lst = [0] * 9
-
-    # 정답 True, False값을 판별해줄 값 ans
+    sudoku = [0] * 10
     ans = 1
+    # 가로 검증
+    for i in range(9):
+        for j in range(9):
+            sudoku[puzzle[i][j]] += 1
+        if sudoku.count(1) < 9: # 1이 9개 없다면(중복되거나, 없는값이 있다면)
+            ans = 0
+            break
+        sudoku = [0] * 10   # 초기화
 
-    # 가로줄의 길이만큼 반복문을 통해 count 1 ~ 9
-    for i in range(1, 10):
-        for j in range(1, 10):
-            if j in puzzle[i - 1]:
-                cnt_lst[j - 1] += 1
+    # 세로검증
+    for j in range(9):
+        for i in range(9):
+            sudoku[puzzle[i][j]] += 1
+        if sudoku.count(1) < 9:  # 1이 9개 없다면(중복되거나, 없는값이 있다면)
+            ans = 0
+            break
+        sudoku = [0] * 10  # 초기화
 
-        for cnt in cnt_lst:
-            if cnt != 1:
+    # 3x3 검증
+    for i in range(0, 9, 3):
+        for j in range(0, 9, 3):
+            for k in range(i, i+3):
+                for l in range(j, j+3):
+                    sudoku[puzzle[k][l]] += 1
+            if sudoku.count(1) < 9:  # 1이 9개 없다면(중복되거나, 없는값이 있다면)
                 ans = 0
                 break
-        cnt_lst = [0] * 9
+            sudoku = [0] * 10  # 초기화
 
-    cnt_lst = [0] * 9
-
-    # 세로줄 평가
-    # 세로줄로 새로운 lst 생성
-    ver_pz = [list(tp) for tp in zip(*puzzle)]
-
-    for i in range(1, 10):
-        for j in range(1, 10):
-            if j in ver_pz[i - 1]:
-                cnt_lst[j - 1] += 1
-
-        for cnt in cnt_lst:
-            if cnt != 1:
-                ans = 0
-                break
-        cnt_lst = [0] * 9
-
-    cnt_lst = [0] * 9
-
-    # 3 x 3 행렬 평가
-    for i in range(0, 7, 3):
-        for j in range(0, 7, 3):
-            for k in range(3):
-                for l in range(3):
-                    if puzzle[i + k][j + k] in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
-                        cnt_lst[puzzle[i + k][j + l] - 1] += 1
-
-            for cnt in cnt_lst:
-                if cnt != 1:
-                    ans = 0
-                    break
-            cnt_lst = [0] * 9
-
-    # 출력
     print(f'#{tc} {ans}')
